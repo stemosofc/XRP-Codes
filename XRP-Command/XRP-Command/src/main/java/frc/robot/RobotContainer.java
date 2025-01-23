@@ -10,6 +10,8 @@ import frc.robot.commands.ForwardCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.XRPDrivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -50,6 +52,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new ForwardCommand(drivetrain, 1);
+    return new ParallelCommandGroup(new ForwardCommand(drivetrain, 40), arm.setAngle(45));
   }
 }

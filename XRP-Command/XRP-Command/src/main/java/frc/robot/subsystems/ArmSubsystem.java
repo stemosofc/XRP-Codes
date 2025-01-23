@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmSubsystem extends SubsystemBase {
+  
   private XRPServo arm;
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem(int channel) {
@@ -17,7 +18,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public Command setAngle(double angle) {
-    return Commands.run(() -> arm.setAngle(angle), this);
+    return Commands.runOnce(() -> arm.setAngle(angle), this);
   }
 
 
