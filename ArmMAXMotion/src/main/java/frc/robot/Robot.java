@@ -16,6 +16,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -57,8 +58,8 @@ public class Robot extends TimedRobot {
      * factors.
      */
     motorConfig.encoder
-        .positionConversionFactor(1)
-        .velocityConversionFactor(1);
+        .positionConversionFactor(360.0 / 200.0)
+        .velocityConversionFactor(1.0 / 200.0);
 
     /*
      * Configure the closed loop controller. We want to make sure we set the
@@ -68,17 +69,18 @@ public class Robot extends TimedRobot {
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         // Set PID values for position control. We don't need to pass a closed
         // loop slot, as it will default to slot 0.
-        .p(0.8)
+        .p(0.1)
         .i(0)
-        .d(0)
-        .outputRange(-0.8, 0.8);
+        .d(0.02)
+        .outputRange(-0.9,  0.9);
 
     motorConfig.closedLoop.maxMotion
         // Set MAXMotion parameters for position control. We don't need to pass
         // a closed loop slot, as it will default to slot 0.
-        .maxVelocity(5000)
-        .maxAcceleration(2000)
-        .allowedClosedLoopError(0.2);
+        .maxVelocity(25000)
+        .maxAcceleration(50000)
+        .allowedClosedLoopError(0.6);
+
 
     /*
      * Apply the configuration to the SPARK MAX.
@@ -102,12 +104,13 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     SmartDashboard.putNumber("Target Position", setPoint);
     SmartDashboard.putNumber("Output voltage", motor.getBusVoltage());
+    SmartDashboard.putNumber("Percet output", motor.getAppliedOutput());
     if(!state) {
       if(controle.getAButtonPressed()) {
-        setPoint = 50;
+        setPoint = 90;
       }
       if(controle.getXButtonPressed()) {
-        setPoint = 30;
+        setPoint = 45;
       } 
       if(controle.getBButtonPressed()) {
         setPoint = 0;
@@ -132,9 +135,5 @@ public class Robot extends TimedRobot {
     // Display encoder position and velocity
     SmartDashboard.putNumber("Actual Position", encoder.getPosition());
     SmartDashboard.putNumber("Actual Velocity", encoder.getVelocity());
-  }
-
-  double getRotationFromAngles(double angle) {
-    return angle * 25.0 / 360.0;
   }
 }
