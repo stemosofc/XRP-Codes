@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
