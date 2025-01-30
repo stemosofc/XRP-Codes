@@ -4,39 +4,43 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.XRPDrivetrain;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ForwardCommand extends Command {
-  
-  private final PIDController pid = new PIDController(2, 0, 0);
-
-
+public class BangBang extends Command {
   private final XRPDrivetrain drivetrain;
-  /** Creates a new ForwardCommand. */
-  public ForwardCommand(XRPDrivetrain drivetrain, double distance) {
-    this.drivetrain = drivetrain;
+  private final double distance;
+  private double error;
+  /** Creates a new BangBang. */
+  public BangBang(XRPDrivetrain drivetrain, double distance) {
     // Use addRequirements() here to declare subsystem dependencies.
-    pid.setSetpoint(distance);
-    addRequirements(drivetrain);
+    this.drivetrain = drivetrain;
+    this.distance = distance;
 
-    drivetrain.resetEncoders();
+    SmartDashboard.putNumber("Target", distance);
+    
+    addRequirements(drivetrain);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double output = pid.calculate(drivetrain.getLeftDistanceInch());
+    double actualDistance = drivetrain.getLeftDistanceInch();
+    error = distance - actualDistance;
 
-    drivetrain.arcadeDrive(output, 0);
+    if(error > 0) {
+      drivetrain.arcadeDrive(1, 0);
+    } else if (error < 0) {
+      drivetrain.arcadeDrive(1, 0);
+    }
+
+    SmartDashboard.putNumber("Actual Position", actualDistance);
   }
 
   // Called once the command ends or is interrupted.
@@ -48,6 +52,6 @@ public class ForwardCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return pid.atSetpoint();
+    return (error == 0);
   }
 }

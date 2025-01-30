@@ -6,12 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.ForwardCommand;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.commands.PIDCommand;
 import frc.robot.subsystems.XRPDrivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -22,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final XRPDrivetrain drivetrain = new XRPDrivetrain();
-  private final ArmSubsystem arm = new ArmSubsystem(4);
+
   XboxController controle = new XboxController(0);
   private final DriveCommand driveCommand;
 
@@ -41,8 +39,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(controle, 1).onTrue(arm.setAngle(90));
-    new JoystickButton(controle, 1).onFalse(arm.setAngle(0));
+
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -51,6 +48,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new ParallelCommandGroup(new ForwardCommand(drivetrain, 40), arm.setAngle(45));
+    return new ParallelCommandGroup(new PIDCommand(drivetrain, 40));
   }
 }

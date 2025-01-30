@@ -26,6 +26,8 @@ public class XRPDrivetrain extends SubsystemBase {
   private static final double kCountsPerRevolution = kCountsPerMotorShaftRev * kGearRatio; // 585.0
   private static final double kWheelDiameterInch = 2.3622; // 60 mm
 
+  private static final double MAX_VELOCITY_INCH = 14.53;
+
   // The XRP has the left and right motors set to
   // channels 0 and 1 respectively
   private final XRPMotor m_leftMotor = new XRPMotor(0);
@@ -69,6 +71,10 @@ public class XRPDrivetrain extends SubsystemBase {
 
   public double getRightDistanceInch() {
     return m_rightEncoder.getDistance();
+  }
+
+  public double getMaxVelocityInch() {
+    return MAX_VELOCITY_INCH;
   }
 
   @Override
