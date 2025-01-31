@@ -15,7 +15,7 @@ public class BangBang extends Command {
   private double error;
   /** Creates a new BangBang. */
   public BangBang(XRPDrivetrain drivetrain, double distance) {
-    drivetrain.resetEncoders();
+
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivetrain = drivetrain;
     this.distance = distance;
