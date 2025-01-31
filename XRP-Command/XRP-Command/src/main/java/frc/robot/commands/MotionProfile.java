@@ -27,7 +27,7 @@ public class MotionProfile extends Command {
 
     addRequirements(drivetrain);
 
-    feedforward = new SimpleMotorFeedforward(0.1, 0.3);
+    feedforward = new SimpleMotorFeedforward(0.08, 0.084, 0.01);
     constraintsTrapezoid = new TrapezoidProfile.Constraints(drivetrain.getMaxVelocityInch(), 12);
     motionProfile = new ProfiledPIDController(2, 0, 0, constraintsTrapezoid);
 
@@ -46,10 +46,12 @@ public class MotionProfile extends Command {
   @Override
   public void execute() {
     double distance = drivetrain.getLeftDistanceInch();
-    double output = motionProfile.calculate(distance) + feedforward.calculate(motionProfile.getSetpoint().velocity);
+    double desiredVelocity = motionProfile.getSetpoint().velocity;
+    double output = motionProfile.calculate(distance) + feedforward.calculate(desiredVelocity);
     drivetrain.setVoltage(output);
 
     SmartDashboard.putNumber("Actual Position", distance);
+    SmartDashboard.putNumber("Desired velocity", desiredVelocity);
   }
   // Called once the command ends or is interrupted.
   @Override

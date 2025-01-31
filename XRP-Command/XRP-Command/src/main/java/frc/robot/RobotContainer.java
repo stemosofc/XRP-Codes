@@ -54,6 +54,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     drivetrain.resetEncoders();
-    return new SequentialCommandGroup(new MotionProfile(drivetrain, 60), new WaitCommand(5),new MotionProfile(drivetrain, -10));
+    return new SequentialCommandGroup(new MotionProfile(drivetrain, 60));
   }
 }
