@@ -15,18 +15,20 @@ public class BangBang extends Command {
   private double error;
   /** Creates a new BangBang. */
   public BangBang(XRPDrivetrain drivetrain, double distance) {
+    drivetrain.resetEncoders();
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivetrain = drivetrain;
     this.distance = distance;
-
-    SmartDashboard.putNumber("Target", distance);
     
     addRequirements(drivetrain);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    SmartDashboard.putNumber("Target", distance);
+    SmartDashboard.putBoolean("Finished", false);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -37,7 +39,7 @@ public class BangBang extends Command {
     if(error > 0) {
       drivetrain.arcadeDrive(1, 0);
     } else if (error < 0) {
-      drivetrain.arcadeDrive(1, 0);
+      drivetrain.arcadeDrive(-1, 0);
     }
 
     SmartDashboard.putNumber("Actual Position", actualDistance);
@@ -47,6 +49,7 @@ public class BangBang extends Command {
   @Override
   public void end(boolean interrupted) {
     drivetrain.arcadeDrive(0, 0);
+    SmartDashboard.putBoolean("Finished", true);
   }
 
   // Returns true when the command should end.

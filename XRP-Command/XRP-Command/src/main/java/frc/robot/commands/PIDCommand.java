@@ -12,26 +12,24 @@ import frc.robot.subsystems.XRPDrivetrain;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class PIDCommand extends Command {
   
-  private final PIDController pid = new PIDController(0.4, 0, 0);
-
+  private final PIDController pid = new PIDController(2, 0, 0);
+  private final double distance;
 
   private final XRPDrivetrain drivetrain;
   /** Creates a new ForwardCommand. */
   public PIDCommand(XRPDrivetrain drivetrain, double distance) {
     this.drivetrain = drivetrain;
+    this.distance = distance;
     // Use addRequirements() here to declare subsystem dependencies.
     pid.setSetpoint(distance);
     addRequirements(drivetrain);
-
-    drivetrain.resetEncoders();
-
-    SmartDashboard.putNumber("Target", distance);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    SmartDashboard.putNumber("Target", distance);
+    SmartDashboard.putBoolean("Finished", false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -48,6 +46,7 @@ public class PIDCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    SmartDashboard.putBoolean("Finished", true);
     drivetrain.arcadeDrive(0, 0);
   }
 

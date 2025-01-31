@@ -7,7 +7,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.XRPDrivetrain;
@@ -16,37 +15,46 @@ import frc.robot.subsystems.XRPDrivetrain;
 public class MotionProfile extends Command {
 
   private final XRPDrivetrain drivetrain;
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0, 0);
-  private final TrapezoidProfile.Constraints constraintsTrapezoid = new TrapezoidProfile.Constraints(0.3048, 0.200);
-  private final ProfiledPIDController motionProfile = new ProfiledPIDController(2, 0, 0, constraintsTrapezoid);
-
+  private final SimpleMotorFeedforward feedforward;
+  private final TrapezoidProfile.Constraints constraintsTrapezoid;
+  private final ProfiledPIDController motionProfile;
+  private final double distance;
   /** Creates a new MotionProfile. */
   public MotionProfile(XRPDrivetrain drivetrain, double distance) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivetrain = drivetrain;
-
-    motionProfile.setGoal(Units.inchesToMeters(distance));
-    SmartDashboard.putNumber("Target", distance);
+    this.distance = distance;
 
     addRequirements(drivetrain);
+
+    feedforward = new SimpleMotorFeedforward(0.1, 0.3);
+    constraintsTrapezoid = new TrapezoidProfile.Constraints(drivetrain.getMaxVelocityInch(), 12);
+    motionProfile = new ProfiledPIDController(2, 0, 0, constraintsTrapezoid);
+
+    motionProfile.setGoal(distance);
+    motionProfile.setTolerance(0.7);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    SmartDashboard.putNumber("Target", distance);
+    SmartDashboard.putBoolean("Finished", false);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     double distance = drivetrain.getLeftDistanceInch();
-    double output = motionProfile.calculate(Units.inchesToMeters(distance)) + feedforward.calculate(motionProfile.getSetpoint().velocity);
-    drivetrain.arcadeDrive(output, 0);
+    double output = motionProfile.calculate(distance) + feedforward.calculate(motionProfile.getSetpoint().velocity);
+    drivetrain.setVoltage(output);
 
     SmartDashboard.putNumber("Actual Position", distance);
   }
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    SmartDashboard.putBoolean("Finished", true);
     drivetrain.arcadeDrive(0, 0);
   }
 

@@ -42,6 +42,9 @@ public class XRPDrivetrain extends SubsystemBase {
   private final DifferentialDrive m_diffDrive =
       new DifferentialDrive(m_leftMotor::set, m_rightMotor::set);
 
+  private double previousVelocity;
+  private double acceleration;
+
   /** Creates a new XRPDrivetrain. */
   public XRPDrivetrain() {
     // Use inches as unit for encoder distances
@@ -73,8 +76,24 @@ public class XRPDrivetrain extends SubsystemBase {
     return m_rightEncoder.getDistance();
   }
 
+  public double getVelocity() {
+    double leftSpeed = m_leftEncoder.getRate();
+    double rightSpeed = m_rightEncoder.getRate();
+
+    return (leftSpeed + rightSpeed) / 2;
+  }
+
+  public double getAcceleration() {
+    return acceleration;
+  }
+
   public double getMaxVelocityInch() {
     return MAX_VELOCITY_INCH;
+  }
+
+  public void setVoltage(double voltage) {
+    m_leftMotor.setVoltage(voltage);
+    m_rightMotor.setVoltage(voltage);
   }
 
   @Override
@@ -82,6 +101,14 @@ public class XRPDrivetrain extends SubsystemBase {
     // This method will be called once per scheduler run
     odometry.update(gyro.getRotation2d(), Units.inchesToMeters(m_leftEncoder.getDistance()), Units.inchesToMeters(m_rightEncoder.getDistance()));
     field.setRobotPose(odometry.getPoseMeters());
+    double actualVelocity = getVelocity();
+    double deltaVelocity =  actualVelocity - previousVelocity;
+    acceleration = deltaVelocity / (1.0/20.0);
+
+    previousVelocity = actualVelocity;
+
+    SmartDashboard.putNumber("Actual velocity", actualVelocity);
+    SmartDashboard.putNumber("Actual Acceleration", acceleration);
   }
 
   @Override

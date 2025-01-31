@@ -5,11 +5,16 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.BangBang;
+import frc.robot.commands.DeadReckoning;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.MotionProfile;
 import frc.robot.commands.PIDCommand;
 import frc.robot.subsystems.XRPDrivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -48,6 +53,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new ParallelCommandGroup(new PIDCommand(drivetrain, 40));
+    drivetrain.resetEncoders();
+    return new SequentialCommandGroup(new MotionProfile(drivetrain, 60), new WaitCommand(5),new MotionProfile(drivetrain, -10));
   }
 }
