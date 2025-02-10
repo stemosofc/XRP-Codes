@@ -39,6 +39,7 @@ public class Robot extends TimedRobot {
      * objects for later use.
      */
     motor = new SparkMax(10, MotorType.kBrushless);
+
     closedLoopController = motor.getClosedLoopController();
     encoder = motor.getEncoder();
 
@@ -71,7 +72,7 @@ public class Robot extends TimedRobot {
         // loop slot, as it will default to slot 0.
         .p(0.1)
         .i(0)
-        .d(0.02)
+        .d(0)
         .outputRange(-0.9,  0.9);
 
     motorConfig.closedLoop.maxMotion

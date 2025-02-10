@@ -12,7 +12,7 @@ import frc.robot.subsystems.XRPDrivetrain;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class PIDCommand extends Command {
   
-  private final PIDController pid = new PIDController(2, 0, 0);
+  private final PIDController pid = new PIDController(0.6, 0.1, 0);
   private final double distance;
 
   private final XRPDrivetrain drivetrain;

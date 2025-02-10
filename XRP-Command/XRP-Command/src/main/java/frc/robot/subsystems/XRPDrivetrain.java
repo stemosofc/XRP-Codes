@@ -15,12 +15,12 @@ import edu.wpi.first.wpilibj.xrp.XRPMotor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class XRPDrivetrain extends SubsystemBase {
-  Field2d field = new Field2d();
-  DifferentialDriveOdometry odometry;
+  private final Field2d field = new Field2d();
+  public final DifferentialDriveOdometry odometry;
+  public double a;
+  private final XRPGyro gyro = new XRPGyro();
 
- XRPGyro gyro = new XRPGyro();
-
-  private static final double kGearRatio =
+  public double kGearRatio =
       (30.0 / 14.0) * (28.0 / 16.0) * (36.0 / 9.0) * (26.0 / 8.0); // 48.75:1
   private static final double kCountsPerMotorShaftRev = 12.0;
   private static final double kCountsPerRevolution = kCountsPerMotorShaftRev * kGearRatio; // 585.0

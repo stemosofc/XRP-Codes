@@ -44,7 +44,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
+    drivetrain.kGearRatio = 10;
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -54,6 +54,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     drivetrain.resetEncoders();
-    return new SequentialCommandGroup(new MotionProfile(drivetrain, 60));
+    return new MotionProfile(drivetrain, 20);
   }
 }
